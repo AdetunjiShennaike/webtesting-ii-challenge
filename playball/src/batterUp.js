@@ -1,21 +1,35 @@
 import React from 'react'
+import { Display } from './dashBoard';
 
 
 class AtBat extends React.Component {
-  state = {
-    strikeCount: 0,
-    ballCount: 0,
-    score: 0
+ 
+    state = {
+      strikeCount: 0,
+      ballCount: 0,
+      score: 0
+    }
+  
+  
+  resetStrike(count) {
+    this.setState({
+      strikeCount: count
+    })
   }
-
-  strike = (strike) => {
-    strike++
+  
+  resetBall(count) {
+    this.setState({
+      ballCount: count
+    })
+  }
+  
+  strike = e => {
+    e.preventDefault()
+    let strike = this.state.strikeCount++
     if (strike == 3) {
       strike = 0
-      this.setState({
-        strikeCount: strike,
-        ballCount: strike
-      })
+      this.resetBall(strike)
+      this.resetStrike(strike)
     }
     else {
       this.setState({
@@ -24,14 +38,13 @@ class AtBat extends React.Component {
     }
   }
 
-  ball = (ball) => {
-    ball++
+  ball = e => {
+    e.preventDefault()
+    let ball = this.state.ballCount++
     if (ball == 4) {
       ball = 0 
-      this.setState({ 
-        ballCount: ball,
-        strikeCount: ball
-      })
+      this.resetBall(ball)
+      this.resetStrike(ball)
     }
     else {
       this.setState({
@@ -40,8 +53,9 @@ class AtBat extends React.Component {
     }
   }
 
-  foul = (foul) => {
-    foul++ 
+  foul = e => {
+    e.preventDefault()
+    let foul = this.state.strikeCount++ 
     if (foul >= 2) {
       foul = 2
       this.setState({
@@ -55,15 +69,16 @@ class AtBat extends React.Component {
     }
   }
 
-  hit = (hit) => {
-    hit = 0
+  hit = e => {
+    e.preventDefault()
     const newScore = this.state.score++
+    this.resetBall(0)
+    this.resetStrike(0)
     this.setState({
-      strikeCount: hit,
-      ballCount: hit,
       score: newScore
     })
   }
+
   render(){
     return(
       <div>
@@ -72,12 +87,15 @@ class AtBat extends React.Component {
           <p>Strike {this.state.strikeCount}</p>
           <p>Ball {this.state.ballCount}</p>
         </div>
-        <div className='buttons'>
-          <button onClick={this.strike(this.state.strikeCount)}>Strike</button>
-          <button onClick={this.ball(this.state.ballCount)}>Ball</button>
-          <button onClick={this.foul(this.state.strikeCount)}>Foul</button>
-          <button onClick={this.hit(this.state.score)}>Hit</button>
-        </div>
+        <Display 
+          hit={this.hit} 
+          strike={this.strike} 
+          ball={this.ball}
+          foul={this.foul}
+          score={this.state.score}
+          strikeCount={this.state.strikeCount}
+          ballCount={this.state.ballCount}
+        />
       </div>
     )
   }
